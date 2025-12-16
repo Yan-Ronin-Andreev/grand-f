@@ -11,6 +11,51 @@
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Inter:wght@300..900&display=swap" rel="stylesheet">
 
   <style>
+    /* ===== ФУТЕР-СЛАЙДЕР ===== */
+/* ===== ФУТЕР-СЛАЙДЕР ===== */
+.footer-slider {
+  margin-top: 48px;
+  display: flex;
+  gap: 28px;
+  overflow-x: auto;
+  padding: 20px 40px 40px;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+
+  /* даём выйти за экран */
+  margin-left: -40px;
+  margin-right: -40px;
+}
+
+.footer-slider::-webkit-scrollbar {
+  height: 8px;
+}
+
+.footer-slider::-webkit-scrollbar-thumb {
+  background: #c7d6ea;
+  border-radius: 4px;
+}
+
+/* ОДНА КАРТОЧКА */
+.footer-slide {
+  flex: 0 0 auto;
+  height: 400px;              /* ← ЕДИНАЯ ВЫСОТА */
+  scroll-snap-align: center;
+}
+
+/* КАРТИНКА */
+.footer-slide img {
+  height: 100%;
+  width: auto;                /* ← ширина от пропорций */
+  display: block;
+  border-radius: 16px;
+  border: 2px solid transparent;
+
+  object-fit: contain;        /* 🔁 можно заменить на cover */
+}
+
+
+
     * { box-sizing: border-box; }
 
     body {
@@ -20,7 +65,6 @@
       color: #2b2b2b;
     }
 
-    /* ===== ОБЛОЖКА ===== */
     header {
       min-height: 100vh;
       display: flex;
@@ -55,7 +99,33 @@
       color: #555;
     }
 
-    /* ===== ТАЙМЛАЙН ===== */
+    .music-btn {
+      margin-top: 16px;
+font-size: 18px;
+padding: 14px 34px;
+border-radius: 999px;
+border: 2px solid #c7d6ea;
+background: #ffffff;
+color: #6f8fbf;
+cursor: pointer;
+box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+transition: all .3s ease;
+position: relative;
+}
+
+
+.music-btn:hover {
+transform: translateY(-2px);
+box-shadow: 0 16px 32px rgba(0,0,0,0.18);
+background: #f4f7fc;
+}
+
+
+.music-btn:active {
+transform: translateY(0);
+box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
     .timeline {
       position: relative;
       max-width: 1200px;
@@ -267,6 +337,7 @@
       }
     }
       header h2 { font-size: 64px; margin-top: -70px; }
+      header h3 { font-size: 40px; }
 
       .timeline::before {
         left: 20px;
@@ -288,20 +359,34 @@
       }
     }
   </style>
+      <script>
+      function playM () {
+        const music = document.getElementById('bgMusic');
+        const btn = document.getElementById('musicBtn');
+
+        music.paused ? music.play() : music.pause();
+      }
+    </script>
 </head>
 <body>
-
 <header>
   <img src="imgs/bgl.png" style="    position: fixed;
     z-index: 5;
     bottom: 0;
     width: 40vw;
     left: 0;">
+  <h3>ДЕДУШКА-ДЕДУЛЯ</h3>
   <h1>70 ЛЕТ</h1>
   <h2>с юбилеем!</h2>
   <p>
     Этот интерактивный фотоальбом — история твоей жизни.
-    Листай вниз, как будто перелистываешь страницы.
+    Листай вниз, как будто перелистываешь страницы.<br>
+    <audio loop autoplay id="bgMusic">
+        <source src="aud/bg.mp3" type="audio/mpeg">
+    </audio>
+    <button id="musicBtn" class="music-btn" onclick="playM()">
+      Включить музыку
+    </button>
   </p>
   <img src="imgs/bgr.png" style="    position: fixed;
     z-index: 5;
@@ -316,15 +401,17 @@
     <div class="stage-content">
       <h2>Рождение легенды</h2>
       <p>
-        Фото из раннего детства не сохранились.<br>
+        Фото из раннего детства не сохранились. Сохранились только фото создателей<br>
         По семейной версии — потому что ты <strong>сразу родился взрослым</strong>,
         серьёзным и с готовым жизненным планом.
       </p>
     </div>
     <div class="photo-wrapper">
       <div class="photo multi">
-        <img src="imgs/b1.jpg" alt="Без фото" /> <img src="imgs/b2.jpg" alt="Без фото" />
-        <span style="margin-top: 660px;">Начало пути</span>
+        <img src="imgs/pr.jpg" alt="Без фото" /> 
+        <img src="imgs/b1.jpg" alt="Без фото" /> 
+        <img src="imgs/b2.jpg" alt="Без фото" />
+        <span style="margin-top: 755px;">Начало пути</span>
       </div>
     </div>
   </div>
@@ -340,7 +427,7 @@
     <div class="photo-wrapper">
       <div class="photo multi">
         <img src="imgs/gm1.jpg" alt="С бабушкой" /> <img src="imgs/gm2.jpg" alt="С бабушкой" />
-        <span>С бабушкой</span>
+        <span style="margin-top: 370px;">Бабушка рядышком с дедушкой</span>
       </div>
     </div>
   </div>
@@ -363,7 +450,7 @@
 
   <div class="stage">
     <div class="stage-content">
-      <h2>Когда я был маленький</h2>
+      <h2>Когда мы были маленькими</h2>
       <p>
         Моё детство невозможно представить без тебя.
         Забота, спокойствие и уверенность, что ты всегда рядом.
@@ -374,7 +461,8 @@
       <div class="photo multi">
         <img src="imgs/me1.jpg" alt="С внуком" /> 
         <img src="imgs/me2.jpg" alt="С внуком" />
-        <span>Мы вместе</span>
+        <img src="imgs/me3.jpg" alt="С внуком" />
+        <span style="margin-top: 625px;">Мы вместе</span>
       </div>
     </div>
   </div>
@@ -401,8 +489,23 @@
 <footer>
   <h2>Спасибо за всё</h2>
   <p>Мы тебя очень любим ❤️</p>
-  <img style="width: 55vw;" src="imgs/cl.png" alt="Мы" />
+
+  <div class="footer-slider">
+    <div class="footer-slide">
+      <img src="imgs/cl.png" alt="Мы" />
+    </div>
+    <div class="footer-slide">
+      <img src="imgs/f1.jpg" alt="Мы" />
+    </div>
+    <div class="footer-slide">
+      <img src="imgs/f2.jpg" alt="Мы" />
+    </div>
+    <div class="footer-slide">
+      <img src="imgs/f3.jpg" alt="Мы" />
+    </div>
+  </div>
 </footer>
+
 
 <div class="modal" id="albumModal">
   <div class="modal-close" id="modalClose">×</div>
