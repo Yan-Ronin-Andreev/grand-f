@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Семейный фотоальбом — 70 лет</title>
+
+  <!-- Шрифты -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Inter:wght@300..900&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Inter", sans-serif;
+      background: #f7f9fb;
+      color: #2b2b2b;
+    }
+
+    /* ===== ОБЛОЖКА ===== */
+    header {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 40px 20px;
+      background:
+        url('https://www.transparenttextures.com/patterns/paper-fibers.png'),
+        #ffffff;
+      border-bottom: 6px solid #c7d6ea;
+    }
+
+    header h1 {
+      font-size: 140px;
+      margin: 0;
+      color: #9bb7dd;
+      letter-spacing: 4px;
+    }
+
+    header h2 {
+      font-family: "Caveat", cursive;
+      font-size: 96px;
+      margin-top: -110px;
+      margin-bottom: 24px;
+    }
+
+    header p {
+      font-size: 22px;
+      max-width: 720px;
+      color: #555;
+    }
+
+    /* ===== ТАЙМЛАЙН ===== */
+    .timeline {
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 140px 20px;
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: #c7d6ea;
+      transform: translateX(-50%);
+    }
+
+    .stage {
+      display: flex;
+      align-items: center;
+      margin-bottom: 160px;
+      position: relative;
+    }
+
+    .stage:nth-child(even) {
+      flex-direction: row-reverse;
+    }
+
+    .stage-content {
+      width: 40%;
+      padding: 34px 40px;
+      background: #ffffff;
+      border: 2px solid #d7e3f3;
+      border-radius: 18px;
+      box-shadow: 0 14px 32px rgba(0,0,0,0.08);
+    }
+
+    .stage-content h2 {
+      font-size: 34px;
+      margin-bottom: 10px;
+      color: #6f8fbf;
+    }
+
+    .stage-content p {
+      font-size: 21px;
+      line-height: 1.6;
+    }
+
+    /* ===== ФОТО ===== */
+    .photo-wrapper {
+      width: 55%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .photo {
+      position: relative;
+      width: 520px;
+      background: #ffffff;
+      padding: 26px 26px 46px;
+      border: 2px solid #d7e3f3;
+      border-radius: 18px;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.18);
+      transform: translateY(100px) scale(0.94);
+      opacity: 0;
+      transition: all 1s cubic-bezier(.22,.61,.36,1);
+      cursor: pointer;
+    }
+
+    .stage.visible .photo {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    /* ОДНО ФОТО */
+    .photo:not(.multi) img {
+      width: 100%;
+      border-radius: 12px;
+      display: block;
+      position: relative;
+    }
+
+    /* ВЕЕР */
+    .photo.multi img {
+      position: absolute;
+      top: 26px;
+      left: 26px;
+      width: calc(100% - 52px);
+      border-radius: 12px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.25);
+      background: #fff;
+    }
+
+    .photo.multi img:nth-child(1) { transform: rotate(-6deg); z-index: 1; }
+    .photo.multi img:nth-child(2) { transform: rotate(0deg); z-index: 2; }
+    .photo.multi img:nth-child(3) { transform: rotate(6deg); z-index: 3; }
+
+    .photo.multi::after {
+      content: "Нажмите, чтобы открыть альбом";
+      position: absolute;
+      bottom: 12px;
+      right: 18px;
+      font-size: 14px;
+      color: #6f8fbf;
+      font-family: "Caveat", cursive;
+    }
+
+    .photo span {
+      display: block;
+      text-align: center;
+      font-size: 22px;
+      color: #6b6b6b;
+      font-family: "Caveat", cursive;
+    }
+
+    .photo.multi span {
+      margin-top: 280px;
+    }
+
+    /* ===== МОДАЛЬНЫЙ АЛЬБОМ ===== */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      display: flex;
+      gap: 24px;
+      max-width: 90%;
+      max-height: 90%;
+      overflow-x: auto;
+      padding: 20px;
+    }
+
+    .modal-content img {
+      height: 70vh;
+      width: auto;
+      object-fit: contain;
+      border-radius: 14px;
+      flex-shrink: 0;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 36px;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    /* ===== ФИНАЛ ===== */
+    footer {
+      padding: 160px 20px;
+      text-align: center;
+      background:
+        url('https://www.transparenttextures.com/patterns/paper-fibers.png'),
+        #ffffff;
+      border-top: 6px solid #c7d6ea;
+    }
+
+    footer h2 {
+      font-size: 42px;
+      margin-bottom: 20px;
+      color: #6f8fbf;
+    }
+
+    footer p {
+      font-size: 24px;
+      color: #555;
+    }
+
+    /* ===== АДАПТИВ ===== */
+    @media (max-width: 900px) {
+      header h1 { font-size: 90px; }
+      header h2 { font-size: 64px; margin-top: -70px; }
+
+      .timeline::before {
+        left: 20px;
+      }
+
+      .stage {
+        flex-direction: column !important;
+        align-items: flex-start;
+        padding-left: 40px;
+        margin-bottom: 120px;
+      }
+
+      .stage-content,
+      .photo-wrapper {
+        width: 100%;
+      }
+
+      .photo {
+        width: 100%;
+        max-width: 520px;
+        margin-top: 32px;
+      }
+    }
+      header h2 { font-size: 64px; margin-top: -70px; }
+
+      .timeline::before {
+        left: 20px;
+      }
+
+      .stage {
+        flex-direction: column !important;
+        align-items: flex-start;
+        padding-left: 40px;
+      }
+
+      .stage-content,
+      .photo-wrapper {
+        width: 100%;
+      }
+
+      .photo {
+        margin-top: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="imgs/bgl.png" style="    position: fixed;
+    z-index: 5;
+    bottom: 0;
+    width: 40vw;
+    left: 0;">
+  <h1>70 ЛЕТ</h1>
+  <h2>с юбилеем!</h2>
+  <p>
+    Этот интерактивный фотоальбом — история твоей жизни.
+    Листай вниз, как будто перелистываешь страницы.
+  </p>
+  <img src="imgs/bgr.png" style="    position: fixed;
+    z-index: 5;
+    top: 0;
+    width: 40vw;
+    right: 0;">
+</header>
+
+<section class="timeline">
+
+  <div class="stage">
+    <div class="stage-content">
+      <h2>Рождение легенды</h2>
+      <p>
+        Фото из раннего детства не сохранились.<br>
+        По семейной версии — потому что ты <strong>сразу родился взрослым</strong>,
+        серьёзным и с готовым жизненным планом.
+      </p>
+    </div>
+    <div class="photo-wrapper">
+      <div class="photo multi">
+        <img src="imgs/b1.jpg" alt="Без фото" /> <img src="imgs/b2.jpg" alt="Без фото" />
+        <span style="margin-top: 660px;">Начало пути</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-content">
+      <h2>Семья и молодость</h2>
+      <p>
+        Тогда началась самая обычная и самая важная часть жизни.
+        Дом, семья, дела.Ты просто был рядом — и этого хватало.
+      </p>
+    </div>
+    <div class="photo-wrapper">
+      <div class="photo multi">
+        <img src="imgs/gm1.jpg" alt="С бабушкой" /> <img src="imgs/gm2.jpg" alt="С бабушкой" />
+        <span>С бабушкой</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-content">
+      <h2>В кругу семьи</h2>
+      <p>
+        Праздники, встречи и смех за одним столом.
+        Те самые моменты, которые хочется беречь.
+      </p>
+    </div>
+    <div class="photo-wrapper">
+      <div class="photo">
+        <img src="imgs/fm.jpg" alt="Семья" />
+        <span>Семейный вечер</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-content">
+      <h2>Когда я был маленький</h2>
+      <p>
+        Моё детство невозможно представить без тебя.
+        Забота, спокойствие и уверенность, что ты всегда рядом.
+        И забудь про подзатыльник, он был заслуженный.
+      </p>
+    </div>
+    <div class="photo-wrapper">
+      <div class="photo multi">
+        <img src="imgs/me1.jpg" alt="С внуком" /> 
+        <img src="imgs/me2.jpg" alt="С внуком" />
+        <span>Мы вместе</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="stage-content">
+      <h2>Мы и сегодня</h2>
+      <p>
+        Эта фотография создана с помощью технологий,
+        но чувства на ней — самые настоящие.
+        Ты всегда рядом, даже если мы далеко.
+      </p>
+    </div>
+    <div class="photo-wrapper">
+      <div class="photo">
+        <img src="imgs/ai.png" alt="Мы вместе" />
+        <span>С любовью ❤️</span>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<footer>
+  <h2>Спасибо за всё</h2>
+  <p>Мы тебя очень любим ❤️</p>
+  <img style="width: 55vw;" src="imgs/cl.png" alt="Мы" />
+</footer>
+
+<div class="modal" id="albumModal">
+  <div class="modal-close" id="modalClose">×</div>
+  <div class="modal-content" id="modalContent"></div>
+</div>
+
+<script>
+  const stages = document.querySelectorAll('.stage');
+
+  const observer = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    },
+    { threshold: 0.3 }
+  );
+
+  stages.forEach(stage => observer.observe(stage));
+
+  // ===== МОДАЛЬНЫЙ АЛЬБОМ =====
+  const modal = document.getElementById('albumModal');
+  const modalContent = document.getElementById('modalContent');
+  const modalClose = document.getElementById('modalClose');
+
+  document.querySelectorAll('.photo.multi').forEach(photo => {
+    photo.addEventListener('click', () => {
+      modalContent.innerHTML = '';
+      photo.querySelectorAll('img').forEach(img => {
+        const clone = img.cloneNode();
+        
+        modalContent.appendChild(clone);
+      });
+      modal.classList.add('active');
+    });
+  });
+
+  modalClose.addEventListener('click', () => modal.classList.remove('active'));
+  modal.addEventListener('click', e => {
+    if (e.target === modal) modal.classList.remove('active');
+  });
+</script>
+
+</body>
+</html>
